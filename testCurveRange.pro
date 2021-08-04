@@ -21,6 +21,7 @@ SOURCES += \
     Item/CurveItem.cpp \
     Item/CurveLine.cpp \
     Item/CurveModel.cpp \
+    Item/CurveNumber.cpp \
     Item/CurvePt.cpp \
     Item/CurvePtCtrlLine.cpp \
     Item/CurvePtCtrlPt.cpp \
@@ -45,6 +46,7 @@ HEADERS += \
     Item/CurveItem.h \
     Item/CurveLine.h \
     Item/CurveModel.h \
+    Item/CurveNumber.h \
     Item/CurvePt.h \
     Item/CurvePtCtrlLine.h \
     Item/CurvePtCtrlPt.h \

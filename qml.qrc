@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>CurveRangePage.qml</file>
+        <file>CurvePage.qml</file>
     </qresource>
 </RCC>

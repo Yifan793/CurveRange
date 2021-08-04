@@ -1,10 +1,10 @@
-#ifndef CURVEPTCTRLLINE_H
-#define CURVEPTCTRLLINE_H
+#ifndef CURVENUMBER_H
+#define CURVENUMBER_H
 
 #include "CurveItem.h"
 #include "CurveResInfoItem.h"
 
-class CurvePtCtrlLine : public CurvePaintItem
+class CurveNumber : public CurvePaintItem
 {
 public:
     using CurvePaintItem::CurvePaintItem;
@@ -12,4 +12,4 @@ public:
     void paint(QPainter *painter) override;
 };
 
-#endif // CURVEPTCTRLLINE_H
+#endif // CURVENUMBER_H

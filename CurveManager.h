@@ -21,6 +21,10 @@ protected:
     void paint(QPainter *painter) override;
     void doPaint(QPainter *painter);
 
+    void initBackGroundLine();
+    void initBackGroundNum();
+    void initKeyPoint();
+
 protected:
     std::shared_ptr<CurveStateMachine> m_pStateMachine;
     std::shared_ptr<CurveViewer> m_pViewer;
