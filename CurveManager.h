@@ -7,6 +7,9 @@ class CurveStateMachine;
 class CurveViewer;
 class CurveService;
 class CurveModel;
+class CurveBox2D;
+class CurveNotifier;
+class CurveNotifyData;
 class CurveManager : public QQuickPaintedItem
 {
     Q_OBJECT
@@ -26,10 +29,15 @@ protected:
     void initKeyPoint();
 
 protected:
+    void addPt(double dValueX, double dValueY, double dTan);
+
+protected:
     std::shared_ptr<CurveStateMachine> m_pStateMachine;
     std::shared_ptr<CurveViewer> m_pViewer;
     std::shared_ptr<CurveService> m_pService;
     std::shared_ptr<CurveModel> m_pModel;
+    std::shared_ptr<CurveBox2D> m_pBox2D;
+    std::shared_ptr<CurveNotifier> m_pNotifier;
 };
 
 #endif // CURVEMANAGER_H

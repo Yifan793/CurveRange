@@ -1,10 +1,12 @@
 #include "CurveItem.h"
+
 #include "CurveResInfoItem.h"
+
+#include <QDebug>
 
 CurvePaintItem::CurvePaintItem(double dX, double dY, std::shared_ptr<CurveResInfoItem> pResInfo)
     : m_pResInfo(pResInfo), m_dX(dX), m_dY(dY)
 {
-
 }
 
 double CurvePaintItem::getPositionX() const
@@ -19,3 +21,9 @@ double CurvePaintItem::getPositionY() const
     double dY = 1.0 * nHeight / (m_pResInfo->getMaxY() - m_pResInfo->getMinY()) * ( m_dY - m_pResInfo->getMinY());
     return m_pResInfo->getWindowHeight() - dY - lineBorderBottom;
 }
+
+void CurvePaintItem::setValueX(double value)
+{
+     m_dX = value;
+}
+

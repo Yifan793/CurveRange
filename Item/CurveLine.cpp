@@ -20,7 +20,6 @@ void CurveLineX::paint(QPainter *painter)
     double nY = lineBorderTop;
     QPointF point(nX, nY);
     line.setPoints(point, QPointF(nX, m_pResInfo->getWindowHeight() - lineBorderBottom));
-    qDebug() << "test line X " << line;
     painter->drawLine(line);
 
 }
@@ -36,6 +35,5 @@ void CurveLineY::paint(QPainter *painter)
     double nY = getPositionY();
     QPointF point(nX, nY);
     line.setPoints(point, QPointF(m_pResInfo->getWindowWidth() - lineBorderRight, nY));
-    qDebug() << "test line Y " << line;
     painter->drawLine(line);
 }

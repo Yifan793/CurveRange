@@ -1,8 +1,10 @@
 #include "CurveModel.h"
-#include "viewer/CurveViewer.h"
 
-CurveModel::CurveModel(std::shared_ptr<CurveViewer> pViewer)
-    : m_pViewer(pViewer)
+#include "viewer/CurveViewer.h"
+#include "service/CurveBox2D.h"
+
+CurveModel::CurveModel(std::shared_ptr<CurveViewer> pViewer, std::shared_ptr<CurveBox2D> pBox2D)
+    : m_pViewer(pViewer), m_pBox2D(pBox2D)
 {
 
 }
@@ -13,6 +15,7 @@ void CurveModel::addItem(int type, std::shared_ptr<CurveItem> pItem)
     auto pUnit = m_modelUnitMap[type];
     pUnit->m_ItemVec.append(pItem);
     m_pViewer->addItem(pItem);
+    m_pBox2D->addItem(pItem);
 }
 
 std::shared_ptr<CurveItem> CurveModel::getItem(int type, int index) const
@@ -27,6 +30,15 @@ std::shared_ptr<CurveItem> CurveModel::getItem(int type, int index) const
     return pUnit->m_ItemVec[index];
 }
 
+int CurveModel::getSize(int type)
+{
+    auto it = m_modelUnitMap.find(type);
+    if (it == m_modelUnitMap.end())
+        return -1;
+    auto pUnit = it.value();
+    return pUnit->m_ItemVec.size();
+}
+
 void CurveModel::clearUnit(int nType)
 {
     auto it = m_modelUnitMap.find(nType);
@@ -36,6 +48,7 @@ void CurveModel::clearUnit(int nType)
     for( auto pItem : pRemoveItems)
     {
         m_pViewer->removeItem(pItem);
+        m_pBox2D->eraseItem(pItem);
     }
     it.value()->m_ItemVec.clear();
 }

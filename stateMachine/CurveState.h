@@ -20,8 +20,11 @@ public:
     virtual void mouseMoveEvent(QMouseEvent* event) { Q_UNUSED(event) }
     virtual void mouseReleaseEvent(QMouseEvent* event) { Q_UNUSED(event) }
 
+protected:
+    std::shared_ptr<CurveState> switchState(int nType) { return m_pSwitchFunc(nType); }
 
-private:
+
+protected:
     int m_nType;
     std::shared_ptr<CurveService> m_pService;
     std::function<std::shared_ptr<CurveState>(int)> m_pSwitchFunc;

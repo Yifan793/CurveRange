@@ -1,9 +1,22 @@
 #include "CurveViewer.h"
+
 #include "Item/CurveItem.h"
+#include "CurveDefines.h"
 
 CurveViewer::CurveViewer()
 {
+    initPainterOrder();
+}
 
+void CurveViewer::initPainterOrder()
+{
+    m_paintOrder = { c_nModelTypeLine,
+                     c_nModelTypeNumber,
+                     c_nModelTypeCtrlLine,
+                     c_nModelTypeCtrlInPt,
+                     c_nModelTypeCtrlOutPt,
+                     c_nModelTypePoint
+                   };
 }
 
 void CurveViewer::addItem(std::shared_ptr<CurveItem> pItem)
@@ -18,8 +31,15 @@ void CurveViewer::removeItem(std::shared_ptr<CurveItem> pItem)
 
 void CurveViewer::paint(QPainter *painter)
 {
-    for (auto& pItem : m_itemVec)
+    auto paintOrder = getPainterOrder();
+    for (int itemType : paintOrder)
     {
-        pItem->paint(painter);
+        for (auto& pItem : m_itemVec)
+        {
+            if (pItem->getType() == itemType)
+            {
+                pItem->paint(painter);
+            }
+        }
     }
 }

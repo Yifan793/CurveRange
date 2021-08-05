@@ -11,6 +11,7 @@ class CurveLine : public CurvePaintItem
 public:
     using CurvePaintItem::CurvePaintItem;
     int getType() override;
+    bool isHitByPoint(const QPointF& pt) override { return false; }
 };
 
 class CurveLineX : public CurveLine

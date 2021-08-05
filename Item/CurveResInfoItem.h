@@ -19,6 +19,7 @@ public:
     using CurveItem::CurveItem;
     int getType() override;
     void paint(QPainter *painter) override { Q_UNUSED(painter) };
+    bool isHitByPoint(const QPointF &pt) override { return false; }
 
     void setAxisX(double num) { m_dAxisX = num; }
     double getAxisX() { return m_dAxisX; }

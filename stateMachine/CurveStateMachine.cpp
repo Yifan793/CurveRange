@@ -1,10 +1,10 @@
 #include "CurveStateMachine.h"
 #include "CurveState.h"
 #include "stateMachine/CurveNormalState.h"
-#include "stateMachine/CurveMovePtState.h"
+#include "stateMachine/CurveMoveCenterPtState.h"
+#include "stateMachine/CurveMoveCtrlPtState.h"
 
-static int c_nStateNormal = 0;
-static int c_nStateMovePt = 1;
+#include "CurveDefines.h"
 
 CurveStateMachine::CurveStateMachine(std::shared_ptr<CurveService> pService)
     : m_pService(pService)
@@ -15,7 +15,9 @@ CurveStateMachine::CurveStateMachine(std::shared_ptr<CurveService> pService)
 void CurveStateMachine::init()
 {
     registState(c_nStateNormal, std::make_shared<CurveNormalState>());
-    registState(c_nStateMovePt, std::make_shared<CurveMovePtState>());
+    registState(c_nStateMoveCenterPt, std::make_shared<CurveMoveCenterPtState>());
+    registState(c_nStateMoveCtrlInPt, std::make_shared<CurveMoveCtrlInPtState>());
+    registState(c_nStateMoveCtrlOutPt, std::make_shared<CurveMoveCtrlOutPtState>());
 
     switchState(c_nStateNormal);
 }

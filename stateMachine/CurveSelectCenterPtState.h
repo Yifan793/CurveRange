@@ -1,9 +1,9 @@
-#ifndef CURVEMOVEPTSTATE_H
-#define CURVEMOVEPTSTATE_H
+#ifndef CURVESELECTCENTERPTSTATE_H
+#define CURVESELECTCENTERPTSTATE_H
 
 #include "CurveState.h"
 
-class CurveMovePtState : public CurveState
+class CurveSelectCenterPtState : public CurveState
 {
 public:
     using CurveState::CurveState;
@@ -13,4 +13,4 @@ public:
     void mouseReleaseEvent(QMouseEvent *event) override;
 };
 
-#endif // CURVEMOVEPTSTATE_H
+#endif // CURVESELECTCENTERPTSTATE_H

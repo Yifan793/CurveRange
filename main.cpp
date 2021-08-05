@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     qmlRegisterType<CurveManager>("CurveManager", 1, 0, "CurveManager");
     MyWidget3 w;
-    w.resize(300, 300);
+    w.resize(668, 550);
     w.show();
     return a.exec();
 }

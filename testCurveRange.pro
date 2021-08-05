@@ -18,23 +18,26 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     CurveManager.cpp \
     Item/CurveBackGround.cpp \
+    Item/CurveCtrlPt.cpp \
     Item/CurveItem.cpp \
     Item/CurveLine.cpp \
     Item/CurveModel.cpp \
     Item/CurveNumber.cpp \
     Item/CurvePt.cpp \
     Item/CurvePtCtrlLine.cpp \
-    Item/CurvePtCtrlPt.cpp \
     Item/CurveResInfoItem.cpp \
     MyWidget.cpp \
     MyWidget2.cpp \
     MyWidget3.cpp \
     main.cpp \
     mainwindow.cpp \
+    notifier/CurveNotifier.cpp \
+    service/CurveBox2D.cpp \
     service/CurveService.cpp \
-    stateMachine/CurveMoveCtrlPt.cpp \
-    stateMachine/CurveMovePtState.cpp \
+    stateMachine/CurveMoveCenterPtState.cpp \
+    stateMachine/CurveMoveCtrlPtState.cpp \
     stateMachine/CurveNormalState.cpp \
+    stateMachine/CurveSelectCenterPtState.cpp \
     stateMachine/CurveState.cpp \
     stateMachine/CurveStateMachine.cpp \
     viewer/CurveViewer.cpp
@@ -43,22 +46,25 @@ HEADERS += \
     CurveDefines.h \
     CurveManager.h \
     Item/CurveBackGround.h \
+    Item/CurveCtrlPt.h \
     Item/CurveItem.h \
     Item/CurveLine.h \
     Item/CurveModel.h \
     Item/CurveNumber.h \
     Item/CurvePt.h \
     Item/CurvePtCtrlLine.h \
-    Item/CurvePtCtrlPt.h \
     Item/CurveResInfoItem.h \
     MyWidget.h \
     MyWidget2.h \
     MyWidget3.h \
     mainwindow.h \
+    notifier/CurveNotifier.h \
+    service/CurveBox2D.h \
     service/CurveService.h \
-    stateMachine/CurveMoveCtrlPt.h \
-    stateMachine/CurveMovePtState.h \
+    stateMachine/CurveMoveCenterPtState.h \
+    stateMachine/CurveMoveCtrlPtState.h \
     stateMachine/CurveNormalState.h \
+    stateMachine/CurveSelectCenterPtState.h \
     stateMachine/CurveState.h \
     stateMachine/CurveStateMachine.h \
     viewer/CurveViewer.h
