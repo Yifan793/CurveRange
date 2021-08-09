@@ -3,6 +3,7 @@
 #include "stateMachine/CurveNormalState.h"
 #include "stateMachine/CurveMoveCenterPtState.h"
 #include "stateMachine/CurveMoveCtrlPtState.h"
+#include "stateMachine/CurveAddCenterPtState.h"
 
 #include "CurveDefines.h"
 
@@ -18,6 +19,7 @@ void CurveStateMachine::init()
     registState(c_nStateMoveCenterPt, std::make_shared<CurveMoveCenterPtState>());
     registState(c_nStateMoveCtrlInPt, std::make_shared<CurveMoveCtrlInPtState>());
     registState(c_nStateMoveCtrlOutPt, std::make_shared<CurveMoveCtrlOutPtState>());
+    registState(c_nStateAddCenterPt, std::make_shared<CurveAddCenterPtState>());
 
     switchState(c_nStateNormal);
 }
@@ -50,6 +52,11 @@ void CurveStateMachine::mouseMoveEvent(QMouseEvent *event)
 void CurveStateMachine::mouseReleaseEvent(QMouseEvent *event)
 {
     m_pCurState->mouseReleaseEvent(event);
+}
+
+void CurveStateMachine::mouseDoubleClickEvent(QMouseEvent *event)
+{
+    m_pCurState->mouseDoubleClickEvent(event);
 }
 
 void CurveStateMachine::registState(int nStateKey, std::shared_ptr<CurveState> pState)

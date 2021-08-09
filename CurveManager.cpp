@@ -77,6 +77,15 @@ void CurveManager::mouseReleaseEvent(QMouseEvent *event)
     update();
 }
 
+void CurveManager::mouseDoubleClickEvent(QMouseEvent *event)
+{
+    qDebug() << "test mouseDoubleClickEvent CurveManager 2222222222 ";
+    if (!m_pStateMachine)
+        return;
+    m_pStateMachine->mouseDoubleClickEvent(event);
+    update();
+}
+
 void CurveManager::paint(QPainter *painter)
 {
     if (!painter)
@@ -131,9 +140,10 @@ void CurveManager::initKeyPoint()
 {
     addPt(0, 0, 0.07);
     addPt(0.7, 0.3, 1.30);
-    addPt(1.0, 0.9, 2.52);
+//    addPt(1.0, 0.9, 2.52);
 
     int nPtSize = m_pModel->getSize(c_nModelTypePoint);
+    auto pResInfoItem = m_pModel->getTypicalItem<CurveResInfoItem>(c_nModelTypeResInfo, 0);
     for (int i = 0; i < nPtSize - 1; ++i)
     {
         auto pCurveBeginPt = m_pModel->getTypicalItem<CurvePt>(c_nModelTypePoint, i);
@@ -141,6 +151,7 @@ void CurveManager::initKeyPoint()
         auto pCurveLeftCtrlPt = m_pModel->getTypicalItem<CurveCtrlOutPt>(c_nModelTypeCtrlOutPt, i);
         auto pCurveRightCtrlPt = m_pModel->getTypicalItem<CurveCtrlInPt>(c_nModelTypeCtrlInPt, i + 1);
         auto pCurveLine = std::make_shared<CurvePtCtrlLine>(pCurveBeginPt, pCurveEndPt, pCurveLeftCtrlPt, pCurveRightCtrlPt);
+        pCurveLine->setResInfoItem(pResInfoItem);
         m_pModel->addItem(c_nModelTypeCtrlLine, pCurveLine);
     }
 }

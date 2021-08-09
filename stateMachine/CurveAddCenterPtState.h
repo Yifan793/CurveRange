@@ -1,9 +1,9 @@
-#ifndef CURVENORMALSTATE_H
-#define CURVENORMALSTATE_H
+#ifndef CURVEADDCENTERPTSTATE_H
+#define CURVEADDCENTERPTSTATE_H
 
 #include "CurveState.h"
 
-class CurveNormalState : public CurveState
+class CurveAddCenterPtState : public CurveState
 {
 public:
     using CurveState::CurveState;
@@ -13,7 +13,8 @@ public:
     void mouseReleaseEvent(QMouseEvent *event) override;
     void mouseDoubleClickEvent(QMouseEvent *event) override;
 
-    void clear();
+protected:
+    void addPt(int index, double dValueX, double dValueY, double dTan);
 };
 
-#endif // CURVENORMALSTATE_H
+#endif // CURVEADDCENTERPTSTATE_H

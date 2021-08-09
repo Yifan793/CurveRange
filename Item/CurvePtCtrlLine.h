@@ -19,7 +19,10 @@ public:
                     std::shared_ptr<CurveCtrlInPt> pRightCtrlPt);
     int getType() override;
     void paint(QPainter *painter) override;
-    bool isHitByPoint(const QPointF &pt) override { return false; }
+    bool isHitByPoint(const QPointF &pt);
+
+    double getTan(const QPointF& point);
+    double getY(const QPointF& point);
 
     void setBeginPt(std::shared_ptr<CurvePt> pBeginPt) { m_pBeginPt = pBeginPt; }
     void setEndPt(std::shared_ptr<CurvePt> pEndPt) { m_pEndPt = pEndPt; }

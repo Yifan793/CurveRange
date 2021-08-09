@@ -14,7 +14,7 @@ static int c_nStateNormal = 0;
 static int c_nStateMoveCenterPt = 1;
 static int c_nStateMoveCtrlInPt = 2;
 static int c_nStateMoveCtrlOutPt = 3;
-static int c_nStateAddPt = 4;
+static int c_nStateAddCenterPt = 4;
 
 static int c_nFixedCurveWidth = 545;
 static int c_nFixedCurveHeight = 444;

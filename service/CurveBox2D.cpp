@@ -12,17 +12,39 @@ void CurveBox2D::addItem(std::shared_ptr<CurveItem> pItem)
     assert(pItem);
     if (!pItem)
         return;
-    m_items.append(pItem);
+    m_itemVec.append(pItem);
 }
 
-void CurveBox2D::eraseItem(std::shared_ptr<CurveItem> pItem)
+void CurveBox2D::insertItem(int index, std::shared_ptr<CurveItem> pItem)
 {
-    m_items.removeAll(pItem);
+    if (!pItem)
+        return;
+    int count = 0;
+    for(auto& item : m_itemVec)
+    {
+        if (item->getType() == pItem->getType())
+        {
+            if (count == index)
+            {
+                int insertIndex = m_itemVec.indexOf(item) - 1;
+                if (insertIndex < 0)
+                    insertIndex = 0;
+                m_itemVec.insert(insertIndex, pItem);
+                break;
+            }
+            count++;
+        }
+    }
+}
+
+void CurveBox2D::removeItem(std::shared_ptr<CurveItem> pItem)
+{
+    m_itemVec.removeAll(pItem);
 }
 
 std::shared_ptr<CurveItem> CurveBox2D::getHitItem(const QPointF &pt) const
 {
-    for (auto& pItem : m_items)
+    for (auto& pItem : m_itemVec)
     {
         if (pItem->isHitByPoint(pt))
             return pItem;
@@ -32,7 +54,7 @@ std::shared_ptr<CurveItem> CurveBox2D::getHitItem(const QPointF &pt) const
 
 std::shared_ptr<CurveItem> CurveBox2D::getHitItemByType(const QPointF &pt, int nType) const
 {
-    for (auto& pItem : m_items)
+    for (auto& pItem : m_itemVec)
     {
         if (pItem->getType() != nType)
             continue;
@@ -46,7 +68,7 @@ std::shared_ptr<CurveItem> CurveBox2D::getHitItemByType(const QPointF &pt, int n
 QVector<std::shared_ptr<CurveItem>> CurveBox2D::getHitItems(const QPointF& pt) const
 {
     QVector<std::shared_ptr<CurveItem>> hitItems;
-    for (auto& pItem : m_items)
+    for (auto& pItem : m_itemVec)
     {
         if (!pItem->isHitByPoint(pt))
             continue;

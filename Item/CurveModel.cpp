@@ -18,6 +18,29 @@ void CurveModel::addItem(int type, std::shared_ptr<CurveItem> pItem)
     m_pBox2D->addItem(pItem);
 }
 
+void CurveModel::insertItem(int index, int type, std::shared_ptr<CurveItem> pItem)
+{
+    ensureValid(type);
+    auto pUnit = m_modelUnitMap[type];
+    pUnit->m_ItemVec.insert(index, pItem);
+    m_pViewer->insertItem(index, pItem);
+    m_pBox2D->insertItem(index, pItem);
+}
+
+void CurveModel::removeItem(int type, std::shared_ptr<CurveItem> pItem)
+{
+    auto pUnit = m_modelUnitMap[type];
+    pUnit->m_ItemVec.removeAll(pItem);
+    m_pViewer->removeItem(pItem);
+    m_pBox2D->removeItem(pItem);
+}
+
+int CurveModel::getIndex(int type, std::shared_ptr<CurveItem> pItem)
+{
+    auto pUnit = m_modelUnitMap[type];
+    return pUnit->m_ItemVec.indexOf(pItem);
+}
+
 std::shared_ptr<CurveItem> CurveModel::getItem(int type, int index) const
 {
     auto it = m_modelUnitMap.find(type);
@@ -48,7 +71,7 @@ void CurveModel::clearUnit(int nType)
     for( auto pItem : pRemoveItems)
     {
         m_pViewer->removeItem(pItem);
-        m_pBox2D->eraseItem(pItem);
+        m_pBox2D->removeItem(pItem);
     }
     it.value()->m_ItemVec.clear();
 }

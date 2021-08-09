@@ -33,6 +33,7 @@ public:
     int getIndex() { return m_nIndex; }
 
     void setNotifier(std::shared_ptr<CurveNotifier> pNotifier) { m_pNotifier = pNotifier; }
+    void setResInfoItem(std::shared_ptr<CurveResInfoItem> pResInfoItem) { m_pResInfo = pResInfoItem; }
 
     virtual double getPositionX() const;
     virtual double getPositionY() const;

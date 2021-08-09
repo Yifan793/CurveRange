@@ -26,7 +26,6 @@ void CurveNormalState::mousePressEvent(QMouseEvent *event)
     {
         auto pMoveCenterPtState = switchState(c_nStateMoveCtrlInPt);
         pMoveCenterPtState->mousePressEvent(event);
-        qDebug() << "test pCtrlInItem " << pCtrlInItem->getPos();
         return;
     }
 
@@ -35,7 +34,6 @@ void CurveNormalState::mousePressEvent(QMouseEvent *event)
     {
         auto pMoveCenterPtState = switchState(c_nStateMoveCtrlOutPt);
         pMoveCenterPtState->mousePressEvent(event);
-        qDebug() << "test pCtrlOutItem " << pCtrlOutItem->getPos();
         return;
     }
     clear();
@@ -49,6 +47,18 @@ void CurveNormalState::mouseMoveEvent(QMouseEvent *event)
 void CurveNormalState::mouseReleaseEvent(QMouseEvent *event)
 {
 
+}
+
+void CurveNormalState::mouseDoubleClickEvent(QMouseEvent *event)
+{
+    qDebug() << "test mouseDoubleClickEvent 11111111111111111111111111111111111111";
+    auto pCtrlLineItem = m_pService->getBox2D()->getHitItemByType(event->pos(), c_nModelTypeCtrlLine);
+    if (pCtrlLineItem)
+    {
+        auto pAddCenterPtState =  switchState(c_nStateAddCenterPt);
+        pAddCenterPtState->mouseDoubleClickEvent(event);
+        return;
+    }
 }
 
 void CurveNormalState::clear()

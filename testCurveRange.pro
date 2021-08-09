@@ -34,6 +34,7 @@ SOURCES += \
     notifier/CurveNotifier.cpp \
     service/CurveBox2D.cpp \
     service/CurveService.cpp \
+    stateMachine/CurveAddCenterPtState.cpp \
     stateMachine/CurveMoveCenterPtState.cpp \
     stateMachine/CurveMoveCtrlPtState.cpp \
     stateMachine/CurveNormalState.cpp \
@@ -61,6 +62,7 @@ HEADERS += \
     notifier/CurveNotifier.h \
     service/CurveBox2D.h \
     service/CurveService.h \
+    stateMachine/CurveAddCenterPtState.h \
     stateMachine/CurveMoveCenterPtState.h \
     stateMachine/CurveMoveCtrlPtState.h \
     stateMachine/CurveNormalState.h \

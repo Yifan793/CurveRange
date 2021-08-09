@@ -17,7 +17,12 @@ class CurveModel
 {
 public:
     CurveModel(std::shared_ptr<CurveViewer> pViewer, std::shared_ptr<CurveBox2D> pBox2D);
+
     void addItem(int type, std::shared_ptr<CurveItem> pItem);
+    void insertItem(int index, int type, std::shared_ptr<CurveItem> pItem);
+    void removeItem(int type, std::shared_ptr<CurveItem> pItem);
+    int getIndex(int type, std::shared_ptr<CurveItem> pItem);
+
     void clearUnit(int nType);
     std::shared_ptr<CurveItem> getItem(int type, int index) const;
     int getSize(int type);

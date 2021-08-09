@@ -13,13 +13,14 @@ public:
     CurveBox2D();
 
     virtual void addItem(std::shared_ptr<CurveItem> pItem);
-    virtual void eraseItem(std::shared_ptr<CurveItem> pItem);
+    virtual void insertItem(int index, std::shared_ptr<CurveItem> pItem);
+    virtual void removeItem(std::shared_ptr<CurveItem> pItem);
     virtual std::shared_ptr<CurveItem> getHitItem(const QPointF& pt) const;
     virtual std::shared_ptr<CurveItem> getHitItemByType(const QPointF& pt, int nType) const;
     virtual QVector<std::shared_ptr<CurveItem>> getHitItems(const QPointF& pt) const;
 
 protected:
-    QVector<std::shared_ptr<CurveItem>> m_items;
+    QVector<std::shared_ptr<CurveItem>> m_itemVec;
 };
 
 #endif // CURVEBOX2D_H

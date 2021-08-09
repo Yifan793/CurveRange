@@ -2,6 +2,7 @@
 #define CURVESTATE_H
 
 #include <QMouseEvent>
+#include "CurveDefines.h"
 
 class CurveService;
 class CurveState
@@ -19,6 +20,7 @@ public:
     virtual void mousePressEvent(QMouseEvent* event) { Q_UNUSED(event) }
     virtual void mouseMoveEvent(QMouseEvent* event) { Q_UNUSED(event) }
     virtual void mouseReleaseEvent(QMouseEvent* event) { Q_UNUSED(event) }
+    virtual void mouseDoubleClickEvent(QMouseEvent *event) { Q_UNUSED(event) }
 
 protected:
     std::shared_ptr<CurveState> switchState(int nType) { return m_pSwitchFunc(nType); }
