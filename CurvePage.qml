@@ -20,6 +20,17 @@ Rectangle {
         }
     }
 
+    focus: true;
+    Keys.enabled: true;
+    Keys.onPressed: {
+        console.log("test key pressed");
+        curveManager.keyPressed(event);
+    }
+    Keys.onReleased: {
+        console.log("test key release")
+        curveManager.keyReleased(event);
+    }
+
     CurveManager {
         id: curveManager;
         anchors.left: parent.left; anchors.leftMargin: 59;

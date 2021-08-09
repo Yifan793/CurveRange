@@ -22,9 +22,18 @@ void CurveModel::insertItem(int index, int type, std::shared_ptr<CurveItem> pIte
 {
     ensureValid(type);
     auto pUnit = m_modelUnitMap[type];
-    pUnit->m_ItemVec.insert(index, pItem);
-    m_pViewer->insertItem(index, pItem);
-    m_pBox2D->insertItem(index, pItem);
+    if (pUnit->m_ItemVec.size() == index)
+    {
+        pUnit->m_ItemVec.append(pItem);
+        m_pViewer->addItem(pItem);
+        m_pBox2D->addItem(pItem);
+    }
+    else
+    {
+        pUnit->m_ItemVec.insert(index, pItem);
+        m_pViewer->insertItem(index, pItem);
+        m_pBox2D->insertItem(index, pItem);
+    }
 }
 
 void CurveModel::removeItem(int type, std::shared_ptr<CurveItem> pItem)

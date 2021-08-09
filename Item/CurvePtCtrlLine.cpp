@@ -53,13 +53,11 @@ double CurvePtCtrlLine::getTan(const QPointF &point)
     double coe0 = (2 * beginPt.y() - d1 - 2 * endPt.y() - d2) / (dx * dx * dx);
     double coe1 = (-3 * beginPt.y() + 2 * d1 + 3 * endPt.y() + d2) / (dx * dx);
     double coe2 = -d1 / dx;
-    double coe3 = beginPt.y();
 
     return -(3*T*T*coe0 + 2*T*coe1 + coe2);
 }
 
 //鼠标点击的点是否在曲线上有几像素的误差，通过计算得到准确点
-//此处所用公示与SDK中相同
 double CurvePtCtrlLine::getY(const QPointF &point)
 {
     QPointF beginPt = m_pBeginPt->getPos();
@@ -79,7 +77,7 @@ double CurvePtCtrlLine::getY(const QPointF &point)
 bool CurvePtCtrlLine::isHitByPoint(const QPointF &pt)
 {
     double y = getY(pt);
-    if (qAbs(y - pt.y()) < 4)
+    if (qAbs(y - pt.y()) < 7)
         return true;
     return false;
 }

@@ -50,6 +50,26 @@ void CurveManager::init()
     initKeyPoint();
 }
 
+void CurveManager::keyPressed(QObject *event)
+{
+    auto pInfo = std::make_shared<EditorCtrlKeyInfo>();
+    pInfo->key = (Qt::Key)event->property("key").toInt();
+    if (!m_pStateMachine)
+        return;
+    m_pStateMachine->keyPressEvent(pInfo);
+    update();
+}
+
+void CurveManager::keyReleased(QObject *event)
+{
+    auto pInfo = std::make_shared<EditorCtrlKeyInfo>();
+    pInfo->key = (Qt::Key)event->property("key").toInt();
+    if (!m_pStateMachine)
+        return;
+    m_pStateMachine->keyReleaseEvent(pInfo);
+    update();
+}
+
 void CurveManager::mousePressEvent(QMouseEvent *event)
 {
     if (event->button() == Qt::LeftButton)
@@ -79,7 +99,6 @@ void CurveManager::mouseReleaseEvent(QMouseEvent *event)
 
 void CurveManager::mouseDoubleClickEvent(QMouseEvent *event)
 {
-    qDebug() << "test mouseDoubleClickEvent CurveManager 2222222222 ";
     if (!m_pStateMachine)
         return;
     m_pStateMachine->mouseDoubleClickEvent(event);
@@ -140,7 +159,7 @@ void CurveManager::initKeyPoint()
 {
     addPt(0, 0, 0.07);
     addPt(0.7, 0.3, 1.30);
-//    addPt(1.0, 0.9, 2.52);
+    addPt(1.0, 0.9, 2.52);
 
     int nPtSize = m_pModel->getSize(c_nModelTypePoint);
     auto pResInfoItem = m_pModel->getTypicalItem<CurveResInfoItem>(c_nModelTypeResInfo, 0);

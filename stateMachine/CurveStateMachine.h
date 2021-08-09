@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <QMouseEvent>
+#include "CurveState.h"
 
 class CurveService;
 class CurveState;
@@ -14,6 +15,8 @@ public:
 
     std::shared_ptr<CurveState> switchState(int nType);
 
+    virtual void keyPressEvent(EditorCtrlKeyInfo::ptr event);
+    virtual void keyReleaseEvent(EditorCtrlKeyInfo::ptr event);
     virtual void mousePressEvent(QMouseEvent* event);
     virtual void mouseMoveEvent(QMouseEvent* event);
     virtual void mouseReleaseEvent(QMouseEvent* event);

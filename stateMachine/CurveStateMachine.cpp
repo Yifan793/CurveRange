@@ -4,6 +4,7 @@
 #include "stateMachine/CurveMoveCenterPtState.h"
 #include "stateMachine/CurveMoveCtrlPtState.h"
 #include "stateMachine/CurveAddCenterPtState.h"
+#include "stateMachine/CurveDeleteCenterPtState.h"
 
 #include "CurveDefines.h"
 
@@ -20,6 +21,7 @@ void CurveStateMachine::init()
     registState(c_nStateMoveCtrlInPt, std::make_shared<CurveMoveCtrlInPtState>());
     registState(c_nStateMoveCtrlOutPt, std::make_shared<CurveMoveCtrlOutPtState>());
     registState(c_nStateAddCenterPt, std::make_shared<CurveAddCenterPtState>());
+    registState(c_nStateDeleteCenterPt, std::make_shared<CurveDeleteCenterPtState>());
 
     switchState(c_nStateNormal);
 }
@@ -37,6 +39,19 @@ std::shared_ptr<CurveState> CurveStateMachine::switchState(int nType)
     m_pCurState = pState;
     m_pCurState->onStart();
     return m_pCurState;
+}
+
+void CurveStateMachine::keyPressEvent(EditorCtrlKeyInfo::ptr event)
+{
+    if (event->key == Qt::Key_Backspace || event->key == Qt::Key_Delete)
+    {
+        m_pCurState->keyPressEvent(event);
+    }
+}
+
+void CurveStateMachine::keyReleaseEvent(EditorCtrlKeyInfo::ptr event)
+{
+    m_pCurState->keyReleaseEvent(event);
 }
 
 void CurveStateMachine::mousePressEvent(QMouseEvent *event)

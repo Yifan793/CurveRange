@@ -17,6 +17,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     CurveManager.cpp \
+    CurveMouseKeyInfo.cpp \
     Item/CurveBackGround.cpp \
     Item/CurveCtrlPt.cpp \
     Item/CurveItem.cpp \
@@ -35,6 +36,7 @@ SOURCES += \
     service/CurveBox2D.cpp \
     service/CurveService.cpp \
     stateMachine/CurveAddCenterPtState.cpp \
+    stateMachine/CurveDeleteCenterPtState.cpp \
     stateMachine/CurveMoveCenterPtState.cpp \
     stateMachine/CurveMoveCtrlPtState.cpp \
     stateMachine/CurveNormalState.cpp \
@@ -46,6 +48,7 @@ SOURCES += \
 HEADERS += \
     CurveDefines.h \
     CurveManager.h \
+    CurveMouseKeyInfo.h \
     Item/CurveBackGround.h \
     Item/CurveCtrlPt.h \
     Item/CurveItem.h \
@@ -63,6 +66,7 @@ HEADERS += \
     service/CurveBox2D.h \
     service/CurveService.h \
     stateMachine/CurveAddCenterPtState.h \
+    stateMachine/CurveDeleteCenterPtState.h \
     stateMachine/CurveMoveCenterPtState.h \
     stateMachine/CurveMoveCtrlPtState.h \
     stateMachine/CurveNormalState.h \

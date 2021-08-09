@@ -16,7 +16,7 @@ public:
     void mouseReleaseEvent(QMouseEvent *event) override;
 
 protected:
-    QPointF getValueByPos(QPointF pos);
+    void checkIsOutOfRange(QPointF point);
 
 protected:
     std::shared_ptr<CurvePt> m_pMoveItem;

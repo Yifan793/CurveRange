@@ -4,7 +4,14 @@
 #include <QMouseEvent>
 #include "CurveDefines.h"
 
+struct EditorCtrlKeyInfo
+{
+    typedef std::shared_ptr<EditorCtrlKeyInfo> ptr;
+    Qt::Key key;
+};
+
 class CurveService;
+class CurvePt;
 class CurveState
 {
 public:
@@ -17,6 +24,8 @@ public:
     virtual void onStart() {}
     virtual void onStop() {}
 
+    virtual void keyPressEvent(EditorCtrlKeyInfo::ptr event) { Q_UNUSED(event) }
+    virtual void keyReleaseEvent(EditorCtrlKeyInfo::ptr event) { Q_UNUSED(event) }
     virtual void mousePressEvent(QMouseEvent* event) { Q_UNUSED(event) }
     virtual void mouseMoveEvent(QMouseEvent* event) { Q_UNUSED(event) }
     virtual void mouseReleaseEvent(QMouseEvent* event) { Q_UNUSED(event) }
@@ -24,7 +33,10 @@ public:
 
 protected:
     std::shared_ptr<CurveState> switchState(int nType) { return m_pSwitchFunc(nType); }
-
+    void insertPt(int index, double dValueX, double dValueY, double dTan);
+    void deletePt(std::shared_ptr<CurvePt> pItem);
+    double getValueX(double posX) const;
+    double getValueY(double posY) const;
 
 protected:
     int m_nType;

@@ -9,10 +9,28 @@
 
 #include <QDebug>
 
+void CurveNormalState::keyPressEvent(EditorCtrlKeyInfo::ptr event)
+{
+    int ptCount = m_pService->getModel()->getSize(c_nModelTypePoint);
+    for (int i = 0; i < ptCount; i++)
+    {
+        auto pPointItem = m_pService->getModel()->getTypicalItem<CurvePt>(c_nModelTypePoint, i);
+        if (pPointItem->getSelected())
+        {
+            auto pDeleteCenterPtState = switchState(c_nStateDeleteCenterPt);
+            pDeleteCenterPtState->keyPressEvent(event);
+            return;
+        }
+    }
+}
+
+void CurveNormalState::keyReleaseEvent(EditorCtrlKeyInfo::ptr event)
+{
+
+}
+
 void CurveNormalState::mousePressEvent(QMouseEvent *event)
 {
-    QPointF point = event->pos();
-    qDebug() << "test event pos " << event->pos() << " point " << point;
     auto pPointItem = m_pService->getBox2D()->getHitItemByType(event->pos(), c_nModelTypePoint);
     if (pPointItem)
     {
@@ -51,7 +69,6 @@ void CurveNormalState::mouseReleaseEvent(QMouseEvent *event)
 
 void CurveNormalState::mouseDoubleClickEvent(QMouseEvent *event)
 {
-    qDebug() << "test mouseDoubleClickEvent 11111111111111111111111111111111111111";
     auto pCtrlLineItem = m_pService->getBox2D()->getHitItemByType(event->pos(), c_nModelTypeCtrlLine);
     if (pCtrlLineItem)
     {

@@ -15,7 +15,10 @@ class CurveManager : public QQuickPaintedItem
     Q_OBJECT
 public:
     CurveManager(QQuickItem* parent = nullptr);
+
     Q_INVOKABLE void init();
+    Q_INVOKABLE void keyPressed(QObject* event);
+    Q_INVOKABLE void keyReleased(QObject* event);
 
 protected:
     void mousePressEvent(QMouseEvent* event) override;

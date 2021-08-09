@@ -12,9 +12,6 @@ public:
     void mousePressEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
     void mouseDoubleClickEvent(QMouseEvent *event) override;
-
-protected:
-    void addPt(int index, double dValueX, double dValueY, double dTan);
 };
 
 #endif // CURVEADDCENTERPTSTATE_H
