@@ -3,12 +3,7 @@
 
 #include <QMouseEvent>
 #include "CurveDefines.h"
-
-struct EditorCtrlKeyInfo
-{
-    typedef std::shared_ptr<EditorCtrlKeyInfo> ptr;
-    Qt::Key key;
-};
+#include "CurveMouseKeyInfo.h"
 
 class CurveService;
 class CurvePt;
@@ -24,12 +19,13 @@ public:
     virtual void onStart() {}
     virtual void onStop() {}
 
-    virtual void keyPressEvent(EditorCtrlKeyInfo::ptr event) { Q_UNUSED(event) }
-    virtual void keyReleaseEvent(EditorCtrlKeyInfo::ptr event) { Q_UNUSED(event) }
-    virtual void mousePressEvent(QMouseEvent* event) { Q_UNUSED(event) }
-    virtual void mouseMoveEvent(QMouseEvent* event) { Q_UNUSED(event) }
-    virtual void mouseReleaseEvent(QMouseEvent* event) { Q_UNUSED(event) }
-    virtual void mouseDoubleClickEvent(QMouseEvent *event) { Q_UNUSED(event) }
+    virtual void keyPressEvent(CurveBaseKeyInfo::ptr event) { Q_UNUSED(event) }
+    virtual void keyReleaseEvent(CurveBaseKeyInfo::ptr event) { Q_UNUSED(event) }
+    virtual void mousePressEvent(CurveBaseMouseInfo::ptr event) { Q_UNUSED(event) }
+    virtual void mouseMoveEvent(CurveBaseMouseInfo::ptr event) { Q_UNUSED(event) }
+    virtual void mouseReleaseEvent(CurveBaseMouseInfo::ptr event) { Q_UNUSED(event) }
+    virtual void mouseDoubleClickEvent(CurveBaseMouseInfo::ptr event) { Q_UNUSED(event) }
+    virtual void wheelEvent(CurveBaseWheelInfo::ptr event) { Q_UNUSED(event) }
 
 protected:
     std::shared_ptr<CurveState> switchState(int nType) { return m_pSwitchFunc(nType); }

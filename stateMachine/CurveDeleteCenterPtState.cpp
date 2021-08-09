@@ -6,7 +6,7 @@
 #include "Item/CurveCtrlPt.h"
 #include "Item/CurvePtCtrlLine.h"
 
-void CurveDeleteCenterPtState::keyPressEvent(EditorCtrlKeyInfo::ptr event)
+void CurveDeleteCenterPtState::keyPressEvent(CurveBaseKeyInfo::ptr event)
 {
     QVector<std::shared_ptr<CurvePt>> deletePtVec;
     int ptCount = m_pService->getModel()->getSize(c_nModelTypePoint);
@@ -24,7 +24,7 @@ void CurveDeleteCenterPtState::keyPressEvent(EditorCtrlKeyInfo::ptr event)
     }
 }
 
-void CurveDeleteCenterPtState::keyReleaseEvent(EditorCtrlKeyInfo::ptr event)
+void CurveDeleteCenterPtState::keyReleaseEvent(CurveBaseKeyInfo::ptr event)
 {
     auto pState = switchState(c_nStateNormal);
     pState->keyReleaseEvent(event);

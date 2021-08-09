@@ -8,10 +8,10 @@ class CurveAddCenterPtState : public CurveState
 public:
     using CurveState::CurveState;
 
-    void mouseMoveEvent(QMouseEvent *event) override;
-    void mousePressEvent(QMouseEvent *event) override;
-    void mouseReleaseEvent(QMouseEvent *event) override;
-    void mouseDoubleClickEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(CurveBaseMouseInfo::ptr event) override;
+    void mousePressEvent(CurveBaseMouseInfo::ptr event) override;
+    void mouseReleaseEvent(CurveBaseMouseInfo::ptr event) override;
+    void mouseDoubleClickEvent(CurveBaseMouseInfo::ptr event) override;
 };
 
 #endif // CURVEADDCENTERPTSTATE_H

@@ -17,7 +17,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     CurveManager.cpp \
-    CurveMouseKeyInfo.cpp \
     Item/CurveBackGround.cpp \
     Item/CurveCtrlPt.cpp \
     Item/CurveItem.cpp \
@@ -43,12 +42,15 @@ SOURCES += \
     stateMachine/CurveSelectCenterPtState.cpp \
     stateMachine/CurveState.cpp \
     stateMachine/CurveStateMachine.cpp \
+    util/CurveUtil.cpp \
+    util/MathUtil.cpp \
     viewer/CurveViewer.cpp
 
 HEADERS += \
     CurveDefines.h \
     CurveManager.h \
     CurveMouseKeyInfo.h \
+    CurveSceneData.h \
     Item/CurveBackGround.h \
     Item/CurveCtrlPt.h \
     Item/CurveItem.h \
@@ -73,6 +75,8 @@ HEADERS += \
     stateMachine/CurveSelectCenterPtState.h \
     stateMachine/CurveState.h \
     stateMachine/CurveStateMachine.h \
+    util/CurveUtil.h \
+    util/MathUtil.h \
     viewer/CurveViewer.h
 
 FORMS += \

@@ -41,7 +41,7 @@ std::shared_ptr<CurveState> CurveStateMachine::switchState(int nType)
     return m_pCurState;
 }
 
-void CurveStateMachine::keyPressEvent(EditorCtrlKeyInfo::ptr event)
+void CurveStateMachine::keyPressEvent(CurveBaseKeyInfo::ptr event)
 {
     if (event->key == Qt::Key_Backspace || event->key == Qt::Key_Delete)
     {
@@ -49,29 +49,34 @@ void CurveStateMachine::keyPressEvent(EditorCtrlKeyInfo::ptr event)
     }
 }
 
-void CurveStateMachine::keyReleaseEvent(EditorCtrlKeyInfo::ptr event)
+void CurveStateMachine::keyReleaseEvent(CurveBaseKeyInfo::ptr event)
 {
     m_pCurState->keyReleaseEvent(event);
 }
 
-void CurveStateMachine::mousePressEvent(QMouseEvent *event)
+void CurveStateMachine::mousePressEvent(CurveBaseMouseInfo::ptr event)
 {
     m_pCurState->mousePressEvent(event);
 }
 
-void CurveStateMachine::mouseMoveEvent(QMouseEvent *event)
+void CurveStateMachine::mouseMoveEvent(CurveBaseMouseInfo::ptr event)
 {
     m_pCurState->mouseMoveEvent(event);
 }
 
-void CurveStateMachine::mouseReleaseEvent(QMouseEvent *event)
+void CurveStateMachine::mouseReleaseEvent(CurveBaseMouseInfo::ptr event)
 {
     m_pCurState->mouseReleaseEvent(event);
 }
 
-void CurveStateMachine::mouseDoubleClickEvent(QMouseEvent *event)
+void CurveStateMachine::mouseDoubleClickEvent(CurveBaseMouseInfo::ptr event)
 {
     m_pCurState->mouseDoubleClickEvent(event);
+}
+
+void CurveStateMachine::wheelEvent(CurveBaseWheelInfo::ptr event)
+{
+    m_pCurState->wheelEvent(event);
 }
 
 void CurveStateMachine::registState(int nStateKey, std::shared_ptr<CurveState> pState)

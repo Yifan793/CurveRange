@@ -9,7 +9,7 @@
 
 #include <QDebug>
 
-void CurveNormalState::keyPressEvent(EditorCtrlKeyInfo::ptr event)
+void CurveNormalState::keyPressEvent(CurveBaseKeyInfo::ptr event)
 {
     int ptCount = m_pService->getModel()->getSize(c_nModelTypePoint);
     for (int i = 0; i < ptCount; i++)
@@ -24,14 +24,14 @@ void CurveNormalState::keyPressEvent(EditorCtrlKeyInfo::ptr event)
     }
 }
 
-void CurveNormalState::keyReleaseEvent(EditorCtrlKeyInfo::ptr event)
+void CurveNormalState::keyReleaseEvent(CurveBaseKeyInfo::ptr event)
 {
 
 }
 
-void CurveNormalState::mousePressEvent(QMouseEvent *event)
+void CurveNormalState::mousePressEvent(CurveBaseMouseInfo::ptr event)
 {
-    auto pPointItem = m_pService->getBox2D()->getHitItemByType(event->pos(), c_nModelTypePoint);
+    auto pPointItem = m_pService->getBox2D()->getHitItemByType(event->scenePos, c_nModelTypePoint);
     if (pPointItem)
     {
         auto pMoveCenterPtState = switchState(c_nStateMoveCenterPt);
@@ -39,7 +39,7 @@ void CurveNormalState::mousePressEvent(QMouseEvent *event)
         return;
     }
 
-    auto pCtrlInItem = std::dynamic_pointer_cast<CurveCtrlInPt>(m_pService->getBox2D()->getHitItemByType(event->pos(), c_nModelTypeCtrlInPt));
+    auto pCtrlInItem = std::dynamic_pointer_cast<CurveCtrlInPt>(m_pService->getBox2D()->getHitItemByType(event->scenePos, c_nModelTypeCtrlInPt));
     if (pCtrlInItem && pCtrlInItem->getSelected())
     {
         auto pMoveCenterPtState = switchState(c_nStateMoveCtrlInPt);
@@ -47,7 +47,7 @@ void CurveNormalState::mousePressEvent(QMouseEvent *event)
         return;
     }
 
-    auto pCtrlOutItem = std::dynamic_pointer_cast<CurveCtrlOutPt>(m_pService->getBox2D()->getHitItemByType(event->pos(), c_nModelTypeCtrlOutPt));
+    auto pCtrlOutItem = std::dynamic_pointer_cast<CurveCtrlOutPt>(m_pService->getBox2D()->getHitItemByType(event->scenePos, c_nModelTypeCtrlOutPt));
     if (pCtrlOutItem && pCtrlOutItem->getSelected())
     {
         auto pMoveCenterPtState = switchState(c_nStateMoveCtrlOutPt);
@@ -57,19 +57,19 @@ void CurveNormalState::mousePressEvent(QMouseEvent *event)
     clear();
 }
 
-void CurveNormalState::mouseMoveEvent(QMouseEvent *event)
+void CurveNormalState::mouseMoveEvent(CurveBaseMouseInfo::ptr event)
 {
 
 }
 
-void CurveNormalState::mouseReleaseEvent(QMouseEvent *event)
+void CurveNormalState::mouseReleaseEvent(CurveBaseMouseInfo::ptr event)
 {
 
 }
 
-void CurveNormalState::mouseDoubleClickEvent(QMouseEvent *event)
+void CurveNormalState::mouseDoubleClickEvent(CurveBaseMouseInfo::ptr event)
 {
-    auto pCtrlLineItem = m_pService->getBox2D()->getHitItemByType(event->pos(), c_nModelTypeCtrlLine);
+    auto pCtrlLineItem = m_pService->getBox2D()->getHitItemByType(event->scenePos, c_nModelTypeCtrlLine);
     if (pCtrlLineItem)
     {
         auto pAddCenterPtState =  switchState(c_nStateAddCenterPt);

@@ -6,7 +6,7 @@ MyWidget3::MyWidget3()
 {
     this->setResizeMode(QQuickWidget::SizeRootObjectToView);
     this->setSource(QUrl(getQmlUrl()));
-    this->setFixedSize(668, 550);
+    this->setMinimumSize(668, 550);
 }
 
 QString MyWidget3::getQmlUrl()

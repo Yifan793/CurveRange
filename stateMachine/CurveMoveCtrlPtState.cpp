@@ -6,12 +6,12 @@
 #include "CurveDefines.h"
 #include "Item/CurveCtrlPt.h"
 
-void CurveMoveCtrlInPtState::mousePressEvent(QMouseEvent *event)
+void CurveMoveCtrlInPtState::mousePressEvent(CurveBaseMouseInfo::ptr event)
 {
-    m_pMoveItem = std::dynamic_pointer_cast<CurveCtrlInPt>(m_pService->getBox2D()->getHitItemByType(event->pos(), c_nModelTypeCtrlInPt));
+    m_pMoveItem = std::dynamic_pointer_cast<CurveCtrlInPt>(m_pService->getBox2D()->getHitItemByType(event->scenePos, c_nModelTypeCtrlInPt));
 }
 
-void CurveMoveCtrlInPtState::mouseMoveEvent(QMouseEvent *event)
+void CurveMoveCtrlInPtState::mouseMoveEvent(CurveBaseMouseInfo::ptr event)
 {
     if (!m_pMoveItem)
     {
@@ -21,11 +21,11 @@ void CurveMoveCtrlInPtState::mouseMoveEvent(QMouseEvent *event)
     }
 
     QPointF centerPos = m_pMoveItem->getCenterPoint()->getPos();
-    double dTan = (event->pos().y() -  centerPos.y()) / (centerPos.x() - event->pos().x());
+    double dTan = (event->scenePos.y() -  centerPos.y()) / (centerPos.x() - event->scenePos.x());
     m_pMoveItem->setTan(dTan);
 }
 
-void CurveMoveCtrlInPtState::mouseReleaseEvent(QMouseEvent *event)
+void CurveMoveCtrlInPtState::mouseReleaseEvent(CurveBaseMouseInfo::ptr event)
 {
     auto pState = switchState(c_nStateNormal);
     pState->mouseReleaseEvent(event);
@@ -33,12 +33,12 @@ void CurveMoveCtrlInPtState::mouseReleaseEvent(QMouseEvent *event)
 
 /*******************************/
 
-void CurveMoveCtrlOutPtState::mousePressEvent(QMouseEvent *event)
+void CurveMoveCtrlOutPtState::mousePressEvent(CurveBaseMouseInfo::ptr event)
 {
-    m_pMoveItem = std::dynamic_pointer_cast<CurveCtrlOutPt>(m_pService->getBox2D()->getHitItemByType(event->pos(), c_nModelTypeCtrlOutPt));
+    m_pMoveItem = std::dynamic_pointer_cast<CurveCtrlOutPt>(m_pService->getBox2D()->getHitItemByType(event->scenePos, c_nModelTypeCtrlOutPt));
 }
 
-void CurveMoveCtrlOutPtState::mouseMoveEvent(QMouseEvent *event)
+void CurveMoveCtrlOutPtState::mouseMoveEvent(CurveBaseMouseInfo::ptr event)
 {
     if (!m_pMoveItem)
     {
@@ -48,12 +48,12 @@ void CurveMoveCtrlOutPtState::mouseMoveEvent(QMouseEvent *event)
     }
 
     QPointF centerPos = m_pMoveItem->getCenterPoint()->getPos();
-    double dTan = (centerPos.y() - event->pos().y()) / (event->pos().x() - centerPos.x());
+    double dTan = (centerPos.y() - event->scenePos.y()) / (event->scenePos.x() - centerPos.x());
     m_pMoveItem->setTan(dTan);
 
 }
 
-void CurveMoveCtrlOutPtState::mouseReleaseEvent(QMouseEvent *event)
+void CurveMoveCtrlOutPtState::mouseReleaseEvent(CurveBaseMouseInfo::ptr event)
 {
     auto pState = switchState(c_nStateNormal);
     pState->mouseReleaseEvent(event);

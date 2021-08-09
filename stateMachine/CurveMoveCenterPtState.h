@@ -11,9 +11,9 @@ public:
 
     void onStart() override;
 
-    void mousePressEvent(QMouseEvent *event) override;
-    void mouseMoveEvent(QMouseEvent *event) override;
-    void mouseReleaseEvent(QMouseEvent *event) override;
+    void mousePressEvent(CurveBaseMouseInfo::ptr event) override;
+    void mouseMoveEvent(CurveBaseMouseInfo::ptr event) override;
+    void mouseReleaseEvent(CurveBaseMouseInfo::ptr event) override;
 
 protected:
     void checkIsOutOfRange(QPointF point);

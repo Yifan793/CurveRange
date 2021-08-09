@@ -22,6 +22,9 @@ void CurvePt::paint(QPainter *painter)
     painter->setPen(QPen("#007AFF"));
     painter->setOpacity(1);
 
+    m_posX = getPositionX();
+    m_posY = getPositionY();
+
     QRectF rectCenter(m_posX - nRectLength / 2, m_posY - nRectLength / 2, nRectLength, nRectLength);
     painter->fillRect(rectCenter, "#FFFFFF");
     painter->drawRect(rectCenter);
@@ -37,7 +40,6 @@ bool CurvePt::isHitByPoint(const QPointF &pt)
     QRectF rect(m_posX - nRectLength / 2, m_posY - nRectLength / 2, nRectLength, nRectLength);
     QPolygonF polygon(rect);
 
-    qDebug() << "test CurvePt isHitByPoint " << pt << " rect " << rect << " polygon " << polygon;
     return polygon.containsPoint(pt, Qt::OddEvenFill);
 }
 
@@ -45,6 +47,12 @@ void CurvePt::setPos(QPointF pos)
 {
      m_posX = pos.x();
      m_posY = pos.y();
+
+     double dWidth = m_pResInfo->getWindowWidth() - lineBorderLeft - lineBorderRight;
+     m_dX = (m_posX - lineBorderLeft) / dWidth;
+     double dHeight = m_pResInfo->getWindowHeight() - lineBorderTop - lineBorderBottom;
+     m_dY = (m_pResInfo->getWindowHeight() - m_posY - lineBorderBottom) / dHeight;
+
      auto pNotifyData = std::make_shared<CurveNotifyData>();
      pNotifyData->m_pos = QPointF(m_posX, m_posY);
      if (m_pNotifier)
@@ -55,6 +63,5 @@ void CurvePt::setPos(QPointF pos)
 
 QPointF CurvePt::getPos() const
 {
-    qDebug() << "test posX " << m_posX << " " << m_posY;
     return QPointF(m_posX, m_posY);
 }

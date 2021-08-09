@@ -12,8 +12,12 @@
 #include "Item/CurvePt.h"
 #include "Item/CurveCtrlPt.h"
 #include "Item/CurvePtCtrlLine.h"
+#include "util/CurveUtil.h"
+#include "util/MathUtil.h"
+#include "CurveSceneData.h"
 
 #include <QPainter>
+#include <QQuickWindow>
 
 CurveManager::CurveManager(QQuickItem* parent)
     : QQuickPaintedItem(parent)
@@ -42,6 +46,8 @@ void CurveManager::init()
     m_pModel = std::make_shared<CurveModel>(m_pViewer, m_pBox2D);
     m_pService->setModel(m_pModel);
 
+    m_pSceneData = std::make_shared<CurveSceneData>();
+
     auto pResInfoItem = std::make_shared<CurveResInfoItem>();
     m_pModel->addItem(c_nModelTypeResInfo, pResInfoItem);
 
@@ -52,20 +58,18 @@ void CurveManager::init()
 
 void CurveManager::keyPressed(QObject *event)
 {
-    auto pInfo = std::make_shared<EditorCtrlKeyInfo>();
-    pInfo->key = (Qt::Key)event->property("key").toInt();
     if (!m_pStateMachine)
         return;
+    auto pInfo = convertKeyEvent(event);
     m_pStateMachine->keyPressEvent(pInfo);
     update();
 }
 
 void CurveManager::keyReleased(QObject *event)
 {
-    auto pInfo = std::make_shared<EditorCtrlKeyInfo>();
-    pInfo->key = (Qt::Key)event->property("key").toInt();
     if (!m_pStateMachine)
         return;
+    auto pInfo = convertKeyEvent(event);
     m_pStateMachine->keyReleaseEvent(pInfo);
     update();
 }
@@ -76,7 +80,7 @@ void CurveManager::mousePressEvent(QMouseEvent *event)
     {
         if (!m_pStateMachine)
             return;
-        m_pStateMachine->mousePressEvent(event);
+        m_pStateMachine->mousePressEvent(convertMouseEvent(event));
     }
     update();
 }
@@ -85,7 +89,7 @@ void CurveManager::mouseMoveEvent(QMouseEvent *event)
 {
     if (!m_pStateMachine)
         return;
-    m_pStateMachine->mouseMoveEvent(event);
+    m_pStateMachine->mouseMoveEvent(convertMouseEvent(event));
     update();
 }
 
@@ -93,7 +97,7 @@ void CurveManager::mouseReleaseEvent(QMouseEvent *event)
 {
     if (!m_pStateMachine)
         return;
-    m_pStateMachine->mouseReleaseEvent(event);
+    m_pStateMachine->mouseReleaseEvent(convertMouseEvent(event));
     update();
 }
 
@@ -101,9 +105,120 @@ void CurveManager::mouseDoubleClickEvent(QMouseEvent *event)
 {
     if (!m_pStateMachine)
         return;
-    m_pStateMachine->mouseDoubleClickEvent(event);
+    m_pStateMachine->mouseDoubleClickEvent(convertMouseEvent(event));
     update();
 }
+
+void CurveManager::wheelEvent(QWheelEvent* event)
+{
+    if (event->source() == Qt::MouseEventSynthesizedBySystem)
+    {
+        // mac触摸板双指滑动
+        static QTimer s_moveTimer;
+        static std::once_flag s_onceFlag;
+        std::call_once(s_onceFlag, [this] { //解决误触发双指轻触移动后，双指张合无效
+            connect(&s_moveTimer, &QTimer::timeout, [this] { m_isMoving = false; });
+        });
+
+        if (!m_pStateMachine)
+            return;
+
+        switch(event->phase())
+        {
+        case Qt::ScrollUpdate:
+            if (m_isMoving)
+            {
+                s_moveTimer.start(300);
+
+                m_pStateMachine->mouseMoveEvent(convertMouseEvent(event, false));
+                update();
+            }
+            break;
+        case Qt::ScrollEnd:
+            m_isMoving = false;
+            s_moveTimer.stop();
+
+            m_pStateMachine->mouseReleaseEvent(convertMouseEvent(event, false));
+            update();
+            break;
+        default:
+            if (!m_isMoving)
+            {
+                m_isMoving = true;
+                s_moveTimer.start(300);
+
+                emit sigForceFocus();
+                m_pStateMachine->mousePressEvent(convertMouseEvent(event, true));
+                update();
+            }
+            break;
+        }
+    }
+    else
+    {
+        // 鼠标滚轮
+        adjustSceneByWheelEvent(event);
+        if (!m_pStateMachine)
+            return;
+        m_pStateMachine->wheelEvent(convertWheelEvent(event));
+        update();
+    }
+}
+
+//双指缩放
+void CurveManager::touchEvent(QTouchEvent *event)
+{
+    std::call_once(m_touchOnceFlag, [&] {
+        m_scaleTimer.setInterval(100);
+        m_scaleTimer.setSingleShot(true);
+        connect(&m_scaleTimer, &QTimer::timeout, this, &CurveManager::onTouchScaleTimerTrigger);
+    });
+
+
+    auto mousePos = QCursor::pos();
+    auto mapPos = mapFromGlobal(mousePos);
+
+    if (mapPos.x() > 0 && mapPos.x() < width() && mapPos.y() > 0 && mapPos.y() < height())
+    {
+        auto oriScenePt = CurveUtil::mapToScene(mapPos, m_pSceneData->offset, m_pSceneData->dScale);
+        QTouchEvent* touchEvent = static_cast<QTouchEvent*>(event);
+        QList<QTouchEvent::TouchPoint> touchPoints = touchEvent->touchPoints();
+
+        if (!m_isMoving && touchPoints.size() == 2) //双指操作进行缩放
+        {
+            m_scaleTimer.start();
+            const auto& firstPt = touchPoints.first();
+            const auto& secondPt = touchPoints.last();
+            QLineF line(firstPt.pos(), secondPt.pos());
+            double length = line.length();
+            if (MathUtil::compare(m_dLastScaleLength, -1) == 0)
+            {
+                m_dLastScaleLength = length;
+            }
+            else
+            {
+                double dOriScale = m_pSceneData->dScale;
+                float s = length / m_dLastScaleLength;
+                if (MathUtil::compare(s, 1.0 , 0.05) == 0)
+                {
+                    return;
+                }
+                m_dLastScaleLength = length;
+                double dCurScale = m_pSceneData->dScale * s;
+                dCurScale = std::max(m_pSceneData->dMinScale, dCurScale);
+                dCurScale = std::min(m_pSceneData->dMaxScale, dCurScale);
+                if (MathUtil::compare(dCurScale, dOriScale) != 0)
+                {
+                    m_pSceneData->dScale = dCurScale;
+                    auto afterMapPt = CurveUtil::sceneToMap(oriScenePt, m_pSceneData->offset, m_pSceneData->dScale);
+                    m_pSceneData->offset -= (afterMapPt - mapPos);
+                    update();
+                }
+            }
+        }
+    }
+}
+
 
 void CurveManager::paint(QPainter *painter)
 {
@@ -111,7 +226,42 @@ void CurveManager::paint(QPainter *painter)
         return;
 
     painter->setRenderHint(QPainter::Antialiasing);
+    beforePaint(painter);
+
+    for (auto &item : m_BackGroundItemVec)
+    {
+        item->paint(painter);
+    }
+
+    auto& offset = m_pSceneData->offset;
+    auto nPixelRatio = getDevicePixelRatio();
+    auto dScale = m_pSceneData->dScale;
+
+    QTransform transform;
+    transform = transform.translate(offset.x() * nPixelRatio, offset.y() * nPixelRatio);
+    transform = transform.scale(dScale * nPixelRatio, dScale * nPixelRatio);
+    painter->setTransform(transform);
+    painter->setOpacity(1);
+
+    auto& sceneRect = m_pSceneData->sceneRect;
+    QRectF windowRect(0, 0, m_pSceneData->nWindowWidth * nPixelRatio, m_pSceneData->nWindowHeight * nPixelRatio);
+    sceneRect = CurveUtil::mapToScene(windowRect, offset, dScale);
+
+    m_pSceneData->nWindowWidth = static_cast<int>(width());
+    m_pSceneData->nWindowHeight = static_cast<int>(height());
+
+    auto pResInfoItem = m_pModel->getTypicalItem<CurveResInfoItem>(c_nModelTypeResInfo, 0);
+    pResInfoItem->setWindowWidth(static_cast<int>(width()));
+    pResInfoItem->setWindowHeight(static_cast<int>(height()));
+
     doPaint(painter);
+    afterPaint(painter);
+}
+
+double CurveManager::getDevicePixelRatio()
+{
+    return this->window()->devicePixelRatio();
+    //return FCTransfer::instance()->pWindow->topLevelWidget()->windowHandle()->devicePixelRatio(); 双屏下有这个公式
 }
 
 void CurveManager::doPaint(QPainter *painter)
@@ -145,13 +295,15 @@ void CurveManager::initBackGroundNum()
     for (int i = 0; i < nCountX; ++i)
     {
         auto pLineXItem = std::make_shared<CurveNumber>(i / 10.0, 0, pResInfoItem);
-        m_pModel->addItem(c_nModelTypeNumber, pLineXItem);
+        m_BackGroundItemVec.append(pLineXItem);
+//        m_pModel->addItem(c_nModelTypeNumber, pLineXItem);
     }
 
     for (int j = 1; j < nCountY - 1; ++j)
     {
         auto pLineYItem = std::make_shared<CurveNumber>(0, j / 10.0, pResInfoItem);
-        m_pModel->addItem(c_nModelTypeNumber, pLineYItem);
+        m_BackGroundItemVec.append(pLineYItem);
+//        m_pModel->addItem(c_nModelTypeNumber, pLineYItem);
     }
 }
 
@@ -187,5 +339,130 @@ void CurveManager::addPt(double dValueX, double dValueY, double dTan)
     m_pModel->addItem(c_nModelTypeCtrlOutPt, pCtrloutPt);
 }
 
+std::shared_ptr<CurveBaseMouseInfo> CurveManager::convertMouseEvent(QWheelEvent* event, bool isFirstWheel)
+{
+    if (isFirstWheel)
+    {
+        m_lastTrackpadMovePos = event->pos();
+        m_lastTrackpadMoveGlobalPos = event->globalPos();
+    }
+    else
+    {
+        m_lastTrackpadMovePos += event->pixelDelta();
+        m_lastTrackpadMoveGlobalPos += event->pixelDelta();
+    }
+    auto pInfo = std::make_shared<CurveBaseMouseInfo>();
+    pInfo->globalPos = m_lastTrackpadMoveGlobalPos;
+    pInfo->mapPos = m_lastTrackpadMovePos;
+    pInfo->scenePos = CurveUtil::mapToScene(pInfo->mapPos, m_pSceneData->offset, m_pSceneData->dScale);
+    return pInfo;
+}
+std::shared_ptr<CurveBaseMouseInfo> CurveManager::convertMouseEvent(QMouseEvent* event)
+{
+    auto pInfo = std::make_shared<CurveBaseMouseInfo>();
+    pInfo->globalPos = event->globalPos();
+    pInfo->mapPos = event->pos();
+    pInfo->scenePos = CurveUtil::mapToScene(pInfo->mapPos, m_pSceneData->offset, m_pSceneData->dScale);
+    return pInfo;
+}
+std::shared_ptr<CurveBaseHoverInfo> CurveManager::convertHoverEvent(QHoverEvent* event)
+{
+    auto pInfo = std::make_shared<CurveBaseHoverInfo>();
+    pInfo->mapPos = event->pos();
+    pInfo->oriMapPos = event->oldPos();
+    pInfo->scenePos = CurveUtil::mapToScene(pInfo->mapPos, m_pSceneData->offset, m_pSceneData->dScale);
+    pInfo->oriScenePos = CurveUtil::mapToScene(pInfo->oriMapPos, m_pSceneData->offset, m_pSceneData->dScale);
+    return pInfo;
+}
+std::shared_ptr<CurveBaseWheelInfo> CurveManager::convertWheelEvent(QWheelEvent* event)
+{
+    auto pInfo = std::make_shared<CurveBaseWheelInfo>();
+    QPointF mapPt(event->x(), event->y());
+    pInfo->mMapPt = mapPt;
+    pInfo->mScenePt = CurveUtil::mapToScene(mapPt, m_pSceneData->offset, m_pSceneData->dScale);
+    pInfo->mModifiers = event->modifiers();
+    pInfo->mAngleDelta = event->angleDelta();
+    return pInfo;
+}
+std::shared_ptr<CurveBaseKeyInfo> CurveManager::convertKeyEvent(QObject* obj)
+{
+    auto pInfo = std::make_shared<CurveBaseKeyInfo>();
+    pInfo->key = (Qt::Key)obj->property("key").toInt();
+    pInfo->modifiers = obj->property("modifiers").toInt();
+    m_pStateMachine->keyReleaseEvent(pInfo);
+    return pInfo;
+}
 
+void CurveManager::adjustSceneByWheelEvent(QWheelEvent *event)
+{
+    QPoint delta = event->angleDelta();
+    if (std::abs(delta.x()) < 100 && std::abs(delta.y()) < 100)
+    {
+        return;
+    }
 
+    auto pSceneData = m_pSceneData;
+    auto globalPos = QCursor::pos();
+    auto mapPt = mapFromGlobal(globalPos);
+    double dCurScale = pSceneData->dScale;
+    auto oriScenePt = CurveUtil::mapToScene(mapPt, m_pSceneData->offset, m_pSceneData->dScale);
+
+    if (event->modifiers() == Qt::AltModifier)
+    {
+        //缩放
+        auto dCurScale = m_pSceneData->dScale;
+        if (delta.x() > 0 || delta.y() > 0)
+        {
+            if (dCurScale >= 5)
+                return;
+            pSceneData->dScale = std::min(pSceneData->dMaxScale, pSceneData->dScale * 1.05);
+        }
+        else
+        {
+            if (dCurScale <= 0.2)
+                return;
+            pSceneData->dScale = std::max(pSceneData->dMinScale, pSceneData->dScale * 0.95);
+        }
+    }
+    else
+    {
+        //移动
+        int nBaseLen = pSceneData->nWindowWidth > pSceneData->nWindowHeight ? pSceneData->nWindowWidth : pSceneData->nWindowHeight;
+        double dBaseRatio = 0.02;
+        auto offset = nBaseLen * (delta.y() > 0 ? dBaseRatio : -dBaseRatio);
+        if (event->modifiers() == Qt::ControlModifier)
+        {
+            pSceneData->offset.setX(pSceneData->offset.x() + offset);
+        }
+        else
+        {
+            pSceneData->offset.setY(pSceneData->offset.y() + offset);
+        }
+    }
+
+    if (MathUtil::compare(dCurScale, pSceneData->dScale) != 0)
+    {
+        auto afterMapPt = CurveUtil::sceneToMap(oriScenePt, m_pSceneData->offset, m_pSceneData->dScale);
+        pSceneData->offset -= (afterMapPt - mapPt);
+    }
+}
+
+void CurveManager::adjustSceneByKeyPress(std::shared_ptr<CurveBaseKeyInfo> pKeyInfo)
+{
+    auto pSceneData = m_pSceneData;
+    if (pKeyInfo->modifiers & Qt::ControlModifier)
+    {
+        if (pKeyInfo->key == Qt::Key_Equal || pKeyInfo->key == Qt::Key_Plus)
+        {
+            if (pSceneData->dScale >= m_pSceneData->dMaxScale)
+                return;
+            pSceneData->dScale = std::min(m_pSceneData->dMaxScale, pSceneData->dScale * 1.05);
+        }
+        else if (pKeyInfo->key == Qt::Key_Minus)
+        {
+            if (pSceneData->dScale <= m_pSceneData->dMinScale)
+                return;
+            pSceneData->dScale = std::max(m_pSceneData->dMinScale, pSceneData->dScale * 0.95);
+        }
+    }
+}

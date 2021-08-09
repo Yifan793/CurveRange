@@ -29,7 +29,6 @@ void CurveViewer::addItem(std::shared_ptr<CurveItem> pItem)
 void CurveViewer::insertItem(int index, std::shared_ptr<CurveItem> pItem)
 {
     int count = 0;
-    qDebug() << "test pItem->getType() " << pItem->getType();
     for(auto& item : m_itemVec)
     {
         if (item->getType() == pItem->getType())

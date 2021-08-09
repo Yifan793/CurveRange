@@ -34,9 +34,9 @@ Rectangle {
     CurveManager {
         id: curveManager;
         anchors.left: parent.left; anchors.leftMargin: 59;
+        anchors.right: parent.right; anchors.rightMargin: 64;
         anchors.top: parent.top; anchors.topMargin: 38;
-        width: 545;
-        height: 444;
+        anchors.bottom: parent.bottom; anchors.bottomMargin: 68;
 
         Component.onCompleted: {
             curveManager.init();

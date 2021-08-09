@@ -8,14 +8,14 @@
 
 #include <QDebug>
 
-void CurveMoveCenterPtState::mousePressEvent(QMouseEvent *event)
+void CurveMoveCenterPtState::mousePressEvent(CurveBaseMouseInfo::ptr event)
 {
-    m_pMoveItem = std::dynamic_pointer_cast<CurvePt>(m_pService->getBox2D()->getHitItemByType(event->pos(), c_nModelTypePoint));
+    m_pMoveItem = std::dynamic_pointer_cast<CurvePt>(m_pService->getBox2D()->getHitItemByType(event->scenePos, c_nModelTypePoint));
     m_pMoveItem->setSelected(true);
-    m_lastPt = event->pos();
+    m_lastPt = event->scenePos;
 }
 
-void CurveMoveCenterPtState::mouseMoveEvent(QMouseEvent *event)
+void CurveMoveCenterPtState::mouseMoveEvent(CurveBaseMouseInfo::ptr event)
 {
     if (!m_pMoveItem)
     {
@@ -24,13 +24,13 @@ void CurveMoveCenterPtState::mouseMoveEvent(QMouseEvent *event)
         return;
     }
 
-    auto dir = event->pos() - m_lastPt;
+    auto dir = event->scenePos - m_lastPt;
     m_pMoveItem->setPos(m_pMoveItem->getPos() + dir);
-    m_lastPt = event->pos();
+    m_lastPt = event->scenePos;
     checkIsOutOfRange(m_lastPt);
 }
 
-void CurveMoveCenterPtState::mouseReleaseEvent(QMouseEvent *event)
+void CurveMoveCenterPtState::mouseReleaseEvent(CurveBaseMouseInfo::ptr event)
 {
     auto pState = switchState(c_nStateNormal);
     pState->mouseReleaseEvent(event);

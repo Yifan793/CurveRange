@@ -6,9 +6,9 @@
 #include "CurveDefines.h"
 
 //delete
-void CurveSelectCenterPtState::mousePressEvent(QMouseEvent *event)
+void CurveSelectCenterPtState::mousePressEvent(CurveBaseMouseInfo::ptr event)
 {
-    auto pPointItem = m_pService->getBox2D()->getHitItemByType(event->pos(), c_nModelTypePoint);
+    auto pPointItem = m_pService->getBox2D()->getHitItemByType(event->scenePos, c_nModelTypePoint);
     if (pPointItem)
     {
         auto pMoveCenterPtState = switchState(c_nStateMoveCenterPt);
@@ -17,12 +17,12 @@ void CurveSelectCenterPtState::mousePressEvent(QMouseEvent *event)
     }
 }
 
-void CurveSelectCenterPtState::mouseMoveEvent(QMouseEvent *event)
+void CurveSelectCenterPtState::mouseMoveEvent(CurveBaseMouseInfo::ptr event)
 {
 
 }
 
-void CurveSelectCenterPtState::mouseReleaseEvent(QMouseEvent *event)
+void CurveSelectCenterPtState::mouseReleaseEvent(CurveBaseMouseInfo::ptr event)
 {
 
 }

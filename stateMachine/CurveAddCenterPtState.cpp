@@ -10,33 +10,33 @@
 
 #include <QDebug>
 
-void CurveAddCenterPtState::mousePressEvent(QMouseEvent *event)
+void CurveAddCenterPtState::mousePressEvent(CurveBaseMouseInfo::ptr event)
 {
 
 }
 
-void CurveAddCenterPtState::mouseMoveEvent(QMouseEvent *event)
+void CurveAddCenterPtState::mouseMoveEvent(CurveBaseMouseInfo::ptr event)
 {
 
 }
 
-void CurveAddCenterPtState::mouseReleaseEvent(QMouseEvent *event)
+void CurveAddCenterPtState::mouseReleaseEvent(CurveBaseMouseInfo::ptr event)
 {
     auto pState = switchState(c_nStateNormal);
     pState->mouseReleaseEvent(event);
 }
 
-void CurveAddCenterPtState::mouseDoubleClickEvent(QMouseEvent *event)
+void CurveAddCenterPtState::mouseDoubleClickEvent(CurveBaseMouseInfo::ptr event)
 {
-    auto pItem = m_pService->getBox2D()->getHitItemByType(event->pos(), c_nModelTypeCtrlLine);
+    auto pItem = m_pService->getBox2D()->getHitItemByType(event->scenePos, c_nModelTypeCtrlLine);
     if (!pItem)
         return;
     auto pCtrlLineItem = std::dynamic_pointer_cast<CurvePtCtrlLine>(pItem);
     auto pModel = m_pService->getModel();
     auto pResInfoItem = pModel->getTypicalItem<CurveResInfoItem>(c_nModelTypeResInfo, 0);
-    double dX = getValueX(event->pos().x());
-    double posY = pCtrlLineItem->getY(event->pos()); //y值通过计算得到
+    double dX = getValueX(event->scenePos.x());
+    double posY = pCtrlLineItem->getY(event->scenePos); //y值通过计算得到
     double dY = getValueY(posY);
     int index = m_pService->getModel()->getIndex(c_nModelTypeCtrlLine, pCtrlLineItem) + 1;
-    insertPt(index, dX, dY, pCtrlLineItem->getTan(event->pos()));
+    insertPt(index, dX, dY, pCtrlLineItem->getTan(event->scenePos));
 }
