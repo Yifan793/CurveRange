@@ -5,6 +5,26 @@ Rectangle {
     id: bgRect;
     color: "#222222";
 
+    focus: true;
+    Keys.enabled: true;
+    Keys.onPressed: {
+        curveManager.keyPressed(event);
+    }
+    Keys.onReleased: {
+        curveManager.keyReleased(event);
+    }
+
+    CurveManager {
+        id: curveManager;
+        anchors.top: parent.top;
+        anchors.left: parent.left; anchors.right: parent.right;
+        anchors.bottom: parent.bottom; anchors.bottomMargin: 68;
+
+        Component.onCompleted: {
+            curveManager.init();
+        }
+    }
+
     Rectangle{
         id: textInput;
         anchors.top: parent.top; anchors.topMargin: 42;
@@ -17,29 +37,6 @@ Rectangle {
         TextInput{
             anchors.fill: parent;
             color: "white";
-        }
-    }
-
-    focus: true;
-    Keys.enabled: true;
-    Keys.onPressed: {
-        console.log("test key pressed");
-        curveManager.keyPressed(event);
-    }
-    Keys.onReleased: {
-        console.log("test key release")
-        curveManager.keyReleased(event);
-    }
-
-    CurveManager {
-        id: curveManager;
-        anchors.left: parent.left; anchors.leftMargin: 59;
-        anchors.right: parent.right; anchors.rightMargin: 64;
-        anchors.top: parent.top; anchors.topMargin: 38;
-        anchors.bottom: parent.bottom; anchors.bottomMargin: 68;
-
-        Component.onCompleted: {
-            curveManager.init();
         }
     }
 

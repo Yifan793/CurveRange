@@ -22,10 +22,15 @@ static int c_nFixedCurveHeight = 444;
 
 static int nLineHalfLength = 80;
 
-static int lineBorderLeft = 19;
-static int lineBorderRight = 15;
-static int lineBorderTop = 16;
+//static int lineBorderLeft = 19;
+//static int lineBorderRight = 15;
+//static int lineBorderTop = 16;
+static int lineBorderLeft = 59;
+static int lineBorderRight = 79;
+static int lineBorderTop = 54;
 static int lineBorderBottom = 17;
+static int numBorderLeft = 40;
+static int numBorderBottom = 14;
 
 static int nRectLength = 10;
 

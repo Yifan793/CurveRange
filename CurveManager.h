@@ -14,7 +14,7 @@ class CurveBox2D;
 class CurveNotifier;
 class CurveNotifyData;
 class CurveSceneData;
-class CurveItem;
+class CurvePaintItem;
 class CurveManager : public QQuickPaintedItem
 {
     Q_OBJECT
@@ -33,9 +33,9 @@ protected:
     void wheelEvent(QWheelEvent* event) override;
     void touchEvent(QTouchEvent *event) override;
 
-    virtual void beforePaint(QPainter *painter) { Q_UNUSED(painter) }
+    virtual void beforePaint(QPainter *painter);
     void paint(QPainter *painter) override;
-    virtual void afterPaint(QPainter *painter) { Q_UNUSED(painter) }
+    virtual void afterPaint(QPainter *painter);
     virtual double getDevicePixelRatio();
     void doPaint(QPainter *painter);
 
@@ -54,6 +54,10 @@ protected:
 
 protected:
     void addPt(double dValueX, double dValueY, double dTan);
+    void paintLine(QPainter *painter);
+    void paintNumber(QPainter *painter);
+    void checkOffsetValid(QPointF& offset);
+    void adjustPositionWhenScale();
 
 protected:
     std::shared_ptr<CurveStateMachine> m_pStateMachine;
@@ -71,7 +75,8 @@ protected slots:
     void onTouchScaleTimerTrigger() { m_dLastScaleLength = -1; }
 
 private:
-    QVector<std::shared_ptr<CurveItem>> m_BackGroundItemVec;
+    QVector<std::shared_ptr<CurvePaintItem>> m_LineItemVec;
+    QVector<std::shared_ptr<CurvePaintItem>> m_NumberItemVec;
 
     std::once_flag m_touchOnceFlag;
     double m_dLastScaleLength = -1.0;

@@ -25,9 +25,18 @@ void CurveMoveCenterPtState::mouseMoveEvent(CurveBaseMouseInfo::ptr event)
     }
 
     auto dir = event->scenePos - m_lastPt;
-    m_pMoveItem->setPos(m_pMoveItem->getPos() + dir);
-    m_lastPt = event->scenePos;
-    checkIsOutOfRange(m_lastPt);
+    QPointF setPos = m_pMoveItem->getPos() + dir;
+    //0和1的极值问题
+    double leftPosX = getPosX(0);
+    double rightPosX = getPosX(1);
+    if (setPos.x() < leftPosX || event->scenePos.x() < leftPosX)
+        setPos.setX(leftPosX);
+    if (setPos.x() > rightPosX || event->scenePos.x() > rightPosX)
+        setPos.setX(rightPosX);
+
+    m_pMoveItem->setPos(setPos);
+    m_lastPt = setPos;
+    checkIsOutOfRange(setPos);
 }
 
 void CurveMoveCenterPtState::mouseReleaseEvent(CurveBaseMouseInfo::ptr event)

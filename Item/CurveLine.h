@@ -10,8 +10,12 @@ class CurveLine : public CurvePaintItem
 {
 public:
     using CurvePaintItem::CurvePaintItem;
+    CurveLine(double dX, double dY, std::shared_ptr<CurveResInfoItem> pResInfo, std::shared_ptr<CurveSceneData> pSceneData);
     int getType() override;
     bool isHitByPoint(const QPointF& pt) override { return false; }
+
+protected:
+    std::shared_ptr<CurveSceneData> m_pSceneData;
 };
 
 class CurveLineX : public CurveLine

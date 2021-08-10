@@ -17,6 +17,7 @@ public:
 };
 
 class CurveResInfoItem;
+class CurveSceneData;
 class CurvePaintItem : public CurveItem
 {
 public:
@@ -31,6 +32,7 @@ public:
     double getValueY() { return m_dY; }
     void setIndex(int index) { m_nIndex = index; }
     int getIndex() { return m_nIndex; }
+    void setPixelRatio(double pixelRatio) { m_nPixelRatio = pixelRatio; }
 
     void setNotifier(std::shared_ptr<CurveNotifier> pNotifier) { m_pNotifier = pNotifier; }
     void setResInfoItem(std::shared_ptr<CurveResInfoItem> pResInfoItem) { m_pResInfo = pResInfoItem; }
@@ -44,6 +46,7 @@ protected:
     double m_dX;
     double m_dY;
     int m_nIndex;
+    double m_nPixelRatio;
 };
 
 #endif // CURVEITEM_H

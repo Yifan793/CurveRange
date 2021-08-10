@@ -107,3 +107,20 @@ double CurveState::getValueY(double posY) const
     double dHeight = pResInfoItem->getWindowHeight() - lineBorderTop - lineBorderBottom;
     return (pResInfoItem->getWindowHeight() - posY - lineBorderBottom) / dHeight;
 }
+
+double CurveState::getPosX(double valueX) const
+{
+    auto pModel = m_pService->getModel();
+    auto pResInfoItem = pModel->getTypicalItem<CurveResInfoItem>(c_nModelTypeResInfo, 0);
+    double nWidth = pResInfoItem->getWindowWidth() - lineBorderLeft - lineBorderRight;
+    return nWidth / (pResInfoItem->getMaxX() - pResInfoItem->getMinX()) * ( valueX - pResInfoItem->getMinX()) + lineBorderLeft;
+}
+
+double CurveState::getPosY(double valueY) const
+{
+    auto pModel = m_pService->getModel();
+    auto pResInfoItem = pModel->getTypicalItem<CurveResInfoItem>(c_nModelTypeResInfo, 0);
+    double nHeight = pResInfoItem->getWindowHeight() - lineBorderTop - lineBorderBottom;
+    double dY = 1.0 * nHeight / (pResInfoItem->getMaxY() - pResInfoItem->getMinY()) * ( valueY - pResInfoItem->getMinY());
+    return pResInfoItem->getWindowHeight() - dY - lineBorderBottom;
+}

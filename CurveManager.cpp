@@ -58,6 +58,8 @@ void CurveManager::init()
 
 void CurveManager::keyPressed(QObject *event)
 {
+    auto pKeyInfo = convertKeyEvent(event);
+    adjustSceneByKeyPress(pKeyInfo);
     if (!m_pStateMachine)
         return;
     auto pInfo = convertKeyEvent(event);
@@ -219,6 +221,28 @@ void CurveManager::touchEvent(QTouchEvent *event)
     }
 }
 
+void CurveManager::beforePaint(QPainter *painter)
+{
+    auto pResInfoItem = m_pModel->getTypicalItem<CurveResInfoItem>(c_nModelTypeResInfo, 0);
+    pResInfoItem->setWindowWidth(static_cast<int>(width()));
+    pResInfoItem->setWindowHeight(static_cast<int>(height()));
+
+    //由于曲线比关键点先绘制，所以先更新曲线关键点位置
+    for (int i = 0; i < m_pModel->getSize(c_nModelTypePoint); i++)
+    {
+        auto pPointItem = m_pModel->getTypicalItem<CurvePt>(c_nModelTypePoint, i);
+        pPointItem->setPos(QPointF(pPointItem->getPositionX(), pPointItem->getPositionY()));
+    }
+
+    //背景直线
+    paintLine(painter);
+}
+
+void CurveManager::afterPaint(QPainter *painter)
+{
+    //背景数字
+    paintNumber(painter);
+}
 
 void CurveManager::paint(QPainter *painter)
 {
@@ -228,11 +252,6 @@ void CurveManager::paint(QPainter *painter)
     painter->setRenderHint(QPainter::Antialiasing);
     beforePaint(painter);
 
-    for (auto &item : m_BackGroundItemVec)
-    {
-        item->paint(painter);
-    }
-
     auto& offset = m_pSceneData->offset;
     auto nPixelRatio = getDevicePixelRatio();
     auto dScale = m_pSceneData->dScale;
@@ -241,7 +260,6 @@ void CurveManager::paint(QPainter *painter)
     transform = transform.translate(offset.x() * nPixelRatio, offset.y() * nPixelRatio);
     transform = transform.scale(dScale * nPixelRatio, dScale * nPixelRatio);
     painter->setTransform(transform);
-    painter->setOpacity(1);
 
     auto& sceneRect = m_pSceneData->sceneRect;
     QRectF windowRect(0, 0, m_pSceneData->nWindowWidth * nPixelRatio, m_pSceneData->nWindowHeight * nPixelRatio);
@@ -249,10 +267,6 @@ void CurveManager::paint(QPainter *painter)
 
     m_pSceneData->nWindowWidth = static_cast<int>(width());
     m_pSceneData->nWindowHeight = static_cast<int>(height());
-
-    auto pResInfoItem = m_pModel->getTypicalItem<CurveResInfoItem>(c_nModelTypeResInfo, 0);
-    pResInfoItem->setWindowWidth(static_cast<int>(width()));
-    pResInfoItem->setWindowHeight(static_cast<int>(height()));
 
     doPaint(painter);
     afterPaint(painter);
@@ -276,14 +290,14 @@ void CurveManager::initBackGroundLine()
     int nLineCountY = pResInfoItem->getLineCountY();
     for (int i = 0; i < nLineCountX; ++i)
     {
-        auto pLineXItem = std::make_shared<CurveLineX>(i / 10.0, 0, pResInfoItem);
-        m_pModel->addItem(c_nModelTypeLine, pLineXItem);
+        auto pLineXItem = std::make_shared<CurveLineX>(i / 10.0, 0, pResInfoItem, m_pSceneData);
+        m_LineItemVec.append(pLineXItem);
     }
 
     for (int j = 0; j < nLineCountY; ++j)
     {
-        auto pLineYItem = std::make_shared<CurveLineY>(0, j / 10.0, pResInfoItem);
-        m_pModel->addItem(c_nModelTypeLine, pLineYItem);
+        auto pLineYItem = std::make_shared<CurveLineY>(0, j / 10.0, pResInfoItem, m_pSceneData);
+        m_LineItemVec.append(pLineYItem);
     }
 }
 
@@ -294,16 +308,14 @@ void CurveManager::initBackGroundNum()
     int nCountY = pResInfoItem->getNumCountY();
     for (int i = 0; i < nCountX; ++i)
     {
-        auto pLineXItem = std::make_shared<CurveNumber>(i / 10.0, 0, pResInfoItem);
-        m_BackGroundItemVec.append(pLineXItem);
-//        m_pModel->addItem(c_nModelTypeNumber, pLineXItem);
+        auto pLineXItem = std::make_shared<CurveNumber>(i / 10.0, 0, pResInfoItem, m_pSceneData);
+        m_NumberItemVec.append(pLineXItem);
     }
 
     for (int j = 1; j < nCountY - 1; ++j)
     {
-        auto pLineYItem = std::make_shared<CurveNumber>(0, j / 10.0, pResInfoItem);
-        m_BackGroundItemVec.append(pLineYItem);
-//        m_pModel->addItem(c_nModelTypeNumber, pLineYItem);
+        auto pLineYItem = std::make_shared<CurveNumber>(0, j / 10.0, pResInfoItem, m_pSceneData);
+        m_NumberItemVec.append(pLineYItem);
     }
 }
 
@@ -337,6 +349,63 @@ void CurveManager::addPt(double dValueX, double dValueY, double dTan)
     m_pModel->addItem(c_nModelTypeCtrlInPt, pCtrlInPt);
     auto pCtrloutPt = std::make_shared<CurveCtrlOutPt>(pCurvePt);
     m_pModel->addItem(c_nModelTypeCtrlOutPt, pCtrloutPt);
+}
+
+void CurveManager::paintLine(QPainter *painter)
+{
+    auto nPixelRatio = getDevicePixelRatio();
+    for (auto &item : m_LineItemVec)
+    {
+        item->setPixelRatio(nPixelRatio);
+        item->paint(painter);
+    }
+}
+
+void CurveManager::paintNumber(QPainter *painter)
+{
+    auto nPixelRatio = getDevicePixelRatio();
+    for (auto &item : m_NumberItemVec)
+    {
+        item->setPixelRatio(nPixelRatio);
+        item->paint(painter);
+    }
+}
+
+void CurveManager::checkOffsetValid(QPointF& offset)
+{
+    double dScale = m_pSceneData->dScale;
+    auto pResInfoItem = m_pModel->getTypicalItem<CurveResInfoItem>(c_nModelTypeResInfo, 0);
+
+    //左边界不能大于lineBorderLeft x是0
+    if ((lineBorderLeft * dScale + offset.x()) > lineBorderLeft)
+    {
+        offset.setX(lineBorderLeft * (1 - dScale));
+    }
+    //右边界不能小于pResInfoItem->getWindowWidth() - lineBorderRight x是1
+    if (((pResInfoItem->getWindowWidth() - lineBorderRight) * (dScale - 1) + offset.x()) < 0)
+    {
+        offset.setX((pResInfoItem->getWindowWidth() - lineBorderRight) * (1 - dScale));
+    }
+
+    //下边界不能小于pResInfoItem->getWindowHeight() - lineBorderBottom y是0
+    if (((pResInfoItem->getWindowHeight() - lineBorderBottom) * (dScale - 1) + offset.y()) < 0)
+    {
+        offset.setY((pResInfoItem->getWindowHeight() - lineBorderBottom) * (1 - dScale));
+    }
+    //上边界不能大于lineBorderTop y是1
+    if ((lineBorderTop * dScale + offset.y()) > lineBorderTop)
+    {
+        offset.setY(lineBorderTop * (1 - dScale));
+    }
+}
+
+//限定显示范围
+void CurveManager::adjustPositionWhenScale()
+{
+    QPointF offset = m_pSceneData->offset;
+    checkOffsetValid(offset);
+    m_pSceneData->offset.setX(offset.x());
+    m_pSceneData->offset.setY(offset.y());
 }
 
 std::shared_ptr<CurveBaseMouseInfo> CurveManager::convertMouseEvent(QWheelEvent* event, bool isFirstWheel)
@@ -413,13 +482,13 @@ void CurveManager::adjustSceneByWheelEvent(QWheelEvent *event)
         auto dCurScale = m_pSceneData->dScale;
         if (delta.x() > 0 || delta.y() > 0)
         {
-            if (dCurScale >= 5)
+            if (dCurScale >= m_pSceneData->dMaxScale)
                 return;
             pSceneData->dScale = std::min(pSceneData->dMaxScale, pSceneData->dScale * 1.05);
         }
         else
         {
-            if (dCurScale <= 0.2)
+            if (dCurScale <= m_pSceneData->dMinScale)
                 return;
             pSceneData->dScale = std::max(pSceneData->dMinScale, pSceneData->dScale * 0.95);
         }
@@ -432,11 +501,15 @@ void CurveManager::adjustSceneByWheelEvent(QWheelEvent *event)
         auto offset = nBaseLen * (delta.y() > 0 ? dBaseRatio : -dBaseRatio);
         if (event->modifiers() == Qt::ControlModifier)
         {
-            pSceneData->offset.setX(pSceneData->offset.x() + offset);
+            QPointF setOffset = QPointF(pSceneData->offset.x() + offset, pSceneData->offset.y());
+            checkOffsetValid(setOffset);
+            pSceneData->offset.setX(setOffset.x());
         }
         else
         {
-            pSceneData->offset.setY(pSceneData->offset.y() + offset);
+            QPointF setOffset = QPointF(pSceneData->offset.x(), pSceneData->offset.y() + offset);
+            checkOffsetValid(setOffset);
+            pSceneData->offset.setY(setOffset.y());
         }
     }
 
@@ -445,6 +518,7 @@ void CurveManager::adjustSceneByWheelEvent(QWheelEvent *event)
         auto afterMapPt = CurveUtil::sceneToMap(oriScenePt, m_pSceneData->offset, m_pSceneData->dScale);
         pSceneData->offset -= (afterMapPt - mapPt);
     }
+    adjustPositionWhenScale();
 }
 
 void CurveManager::adjustSceneByKeyPress(std::shared_ptr<CurveBaseKeyInfo> pKeyInfo)
@@ -465,4 +539,5 @@ void CurveManager::adjustSceneByKeyPress(std::shared_ptr<CurveBaseKeyInfo> pKeyI
             pSceneData->dScale = std::max(m_pSceneData->dMinScale, pSceneData->dScale * 0.95);
         }
     }
+    adjustPositionWhenScale();
 }

@@ -9,8 +9,8 @@ public:
     int nWindowWidth;
     int nWindowHeight;
     QRectF sceneRect;
-    double dMinScale = 0.2;
-    double dMaxScale = 5.0;
+    double dMinScale = 1.0;
+    double dMaxScale = 3.0;
     double dScale = 1.0;
     QPointF offset;
 };

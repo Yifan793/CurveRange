@@ -33,6 +33,8 @@ protected:
     void deletePt(std::shared_ptr<CurvePt> pItem);
     double getValueX(double posX) const;
     double getValueY(double posY) const;
+    double getPosX(double valueX) const;
+    double getPosY(double valueY) const;
 
 protected:
     int m_nType;
